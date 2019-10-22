@@ -16,4 +16,12 @@
     <string name="takePhotoBTN">Take picture</string>
     <string name="deleteButton">X</string>
     <string name="openGalBTN">Open galery</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_repassword">Vuelva a escribir la contraseña</string>
+    <string name="hint_name">Nombre</string>
+    <string name="hint_username">Nombre de usuario</string>
+    <string name="hint_mobile">Número de teléfono</string>
+    <string name="label_age">Ingrese su fecha de nacimiento</string>
 </resources>
