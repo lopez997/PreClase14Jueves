@@ -10,11 +10,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -23,6 +30,7 @@ import java.util.List;
 
 import appmoviles.com.preclase13.model.data.CRUDAlbum;
 import appmoviles.com.preclase13.model.entity.Album;
+import appmoviles.com.preclase13.model.entity.User;
 import appmoviles.com.preclase13.util.HTTPSWebUtilDomi;
 import appmoviles.com.preclase13.model.data.CRUDAlbum;
 import appmoviles.com.preclase13.model.entity.Album;
@@ -34,11 +42,43 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<Album> adapter;
     ArrayList<Album> list;
     Button addAlbumBtn;
+    Button signOutBtn;
+    Button friendsBtn;
+
+    FirebaseAuth auth;
+    FirebaseDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseDatabase.getInstance();
+
+        if(auth.getCurrentUser() == null){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        db.getReference().child("usuarios")
+                .child(auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                Toast.makeText(MainActivity.this,
+                        "Hola "+user.getName(),
+                        Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         //0...
         ActivityCompat.requestPermissions(this, new String[]{
@@ -54,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         LVAlbum = findViewById(R.id.LVAlbum);
         LVAlbum.setAdapter(adapter);
         addAlbumBtn = findViewById(R.id.addAlbumBtn);
-
-
+        signOutBtn = findViewById(R.id.signOutBtn);
+        friendsBtn = findViewById(R.id.friendsBtn);
 
         LVAlbum.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -98,6 +138,33 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+
+        signOutBtn.setOnClickListener(
+                (view)->{
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(this)
+                            .setTitle("Salir de la sesión")
+                            .setMessage("¿Desea salir de la sesión?")
+                            .setNegativeButton("Cancelar", (dialog, i) -> {
+                                dialog.cancel();
+                            })
+                            .setPositiveButton("Aceptar", (dialog, i)->{
+                                auth.signOut();
+                                Intent intent = new Intent(this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            });
+                    builder.show();
+
+                }
+        );
+
+        friendsBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, FriendListActivity.class);
+            startActivity(intent);
+        });
+
 
 
     }

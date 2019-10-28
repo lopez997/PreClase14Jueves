@@ -24,4 +24,5 @@
     <string name="hint_username">Nombre de usuario</string>
     <string name="hint_mobile">Número de teléfono</string>
     <string name="label_age">Ingrese su fecha de nacimiento</string>
+    <string name="registrarse">Registrarse</string>
 </resources>
