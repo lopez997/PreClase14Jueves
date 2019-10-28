@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     Button addAlbumBtn;
     Button signOutBtn;
     Button friendsBtn;
-
+    RelativeLayout controlPanel;
     FirebaseAuth auth;
     FirebaseDatabase db;
 
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
+
 
         if(auth.getCurrentUser() == null){
             Intent intent = new Intent(this, LoginActivity.class);
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         addAlbumBtn = findViewById(R.id.addAlbumBtn);
         signOutBtn = findViewById(R.id.signOutBtn);
         friendsBtn = findViewById(R.id.friendsBtn);
+        controlPanel = findViewById(R.id.controlPanel);
 
         LVAlbum.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
