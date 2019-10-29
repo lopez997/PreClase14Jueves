@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import appmoviles.com.preclase13.model.data.CRUDAlbum;
@@ -185,10 +186,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshTaskList() {
-        ArrayList<Album> group = CRUDAlbum.getAllAlbums();
+        HashMap<String, Album> group = CRUDAlbum.getAllAlbums();
         list.clear();
-        for(int i=0 ; i<group.size() ; i++){
-            list.add(group.get(i));
+        for(String key : group.keySet()){
+            Album nAlbum = group.get(key);
+            list.add(nAlbum);
         }
         adapter.notifyDataSetChanged();
     }
