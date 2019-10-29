@@ -39,13 +39,14 @@ import appmoviles.com.preclase13.util.HTTPSWebUtilDomi;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView LVAlbum;
-    ArrayAdapter<Album> adapter;
-    ArrayList<Album> list;
-    Button addAlbumBtn;
-    Button signOutBtn;
-    Button friendsBtn;
-    RelativeLayout controlPanel;
+    private ListView LVAlbum;
+    private ArrayAdapter<Album> adapter;
+    private ArrayList<Album> list;
+    private Button addAlbumBtn;
+    private Button signOutBtn;
+    private Button friendsBtn;
+    private Button syncBtn;
+    private RelativeLayout controlPanel;
     FirebaseAuth auth;
     FirebaseDatabase db;
 
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         signOutBtn = findViewById(R.id.signOutBtn);
         friendsBtn = findViewById(R.id.friendsBtn);
         controlPanel = findViewById(R.id.controlPanel);
+        syncBtn = findViewById(R.id.syncBtn);
 
         LVAlbum.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -168,7 +170,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        syncBtn.setOnClickListener(
+                (v) -> {
 
+                }
+        );
 
     }
 
@@ -176,18 +182,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         refreshTaskList();
-        List<Album> info = CRUDAlbum.getCompleteAlbums();
-        Gson gson = new Gson();
-        String json = gson.toJson(info);
-        Log.e(">>>",json);
-        new Thread(()->{
-            try {
-                HTTPSWebUtilDomi utilDomi = new HTTPSWebUtilDomi();
-                utilDomi.POSTrequest("https://camara-4a96c.firebaseio.com/.json", "");
-            }catch (IOException ex){
-                ex.printStackTrace();
-            }
-        }).start();
     }
 
     private void refreshTaskList() {
