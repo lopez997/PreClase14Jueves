@@ -31,7 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import appmoviles.com.preclase13.model.data.CRUDAlbum;
+import appmoviles.com.preclase13.model.data.CRUDPhoto;
 import appmoviles.com.preclase13.model.entity.Album;
+import appmoviles.com.preclase13.model.entity.Photo;
 import appmoviles.com.preclase13.model.entity.User;
 import appmoviles.com.preclase13.util.HTTPSWebUtilDomi;
 import appmoviles.com.preclase13.model.data.CRUDAlbum;
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseDatabase.getInstance();
 
 
-        if(auth.getCurrentUser() == null){
+        if (auth.getCurrentUser() == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 Toast.makeText(MainActivity.this,
-                        "Hola "+user.getName(),
+                        "Hola " + user.getName(),
                         Toast.LENGTH_LONG).show();
             }
 
@@ -147,20 +149,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         signOutBtn.setOnClickListener(
-                (view)->{
+                (view) -> {
                     AlertDialog.Builder builder =
                             new AlertDialog.Builder(this)
-                            .setTitle("Salir de la sesión")
-                            .setMessage("¿Desea salir de la sesión?")
-                            .setNegativeButton("Cancelar", (dialog, i) -> {
-                                dialog.cancel();
-                            })
-                            .setPositiveButton("Aceptar", (dialog, i)->{
-                                auth.signOut();
-                                Intent intent = new Intent(this, LoginActivity.class);
-                                startActivity(intent);
-                                finish();
-                            });
+                                    .setTitle("Salir de la sesión")
+                                    .setMessage("¿Desea salir de la sesión?")
+                                    .setNegativeButton("Cancelar", (dialog, i) -> {
+                                        dialog.cancel();
+                                    })
+                                    .setPositiveButton("Aceptar", (dialog, i) -> {
+                                        auth.signOut();
+                                        Intent intent = new Intent(this, LoginActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    });
                     builder.show();
 
                 }
@@ -173,6 +175,34 @@ public class MainActivity extends AppCompatActivity {
 
         syncBtn.setOnClickListener(
                 (v) -> {
+                    HashMap<String, Album> completeAlbums = CRUDAlbum.getCompleteAlbums();
+                    db.getReference().child("albumEmbedding")
+                            .child(auth.getCurrentUser().getUid())
+                            .setValue(completeAlbums);
+
+                    HashMap<String, Album> albums = CRUDAlbum.getAllAlbums();
+                    for (String keyAlbums : albums.keySet()) {
+                        Album nAlbum = albums.get(keyAlbums);
+                        nAlbum.setUserID(auth.getCurrentUser().getUid());
+                        db.getReference().child("albums")
+                                .child(auth.getCurrentUser().getUid())
+                                .child(nAlbum.getId())
+                                .setValue(nAlbum);
+
+                        HashMap<String, Photo> photos = CRUDPhoto.getAllPhotosOfAlbum(nAlbum);
+                        for (String photoKey : photos.keySet()) {
+                            Photo nPhoto = photos.get(photoKey);
+                            db.getReference()
+                                    .child("fotos")
+                                    .child(nAlbum.getId())
+                                    .child(nPhoto.getId())
+                                    .setValue(nPhoto);
+
+
+                        }
+
+                    }
+
 
                 }
         );
@@ -188,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
     private void refreshTaskList() {
         HashMap<String, Album> group = CRUDAlbum.getAllAlbums();
         list.clear();
-        for(String key : group.keySet()){
+        for (String key : group.keySet()) {
             Album nAlbum = group.get(key);
             list.add(nAlbum);
         }

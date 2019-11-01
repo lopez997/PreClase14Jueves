@@ -67,6 +67,7 @@ public class PhotoAdapter extends BaseAdapter {
 
         commentsPhotoBtn.setOnClickListener((v)->{
             CommentsFragment fragment = new CommentsFragment();
+            fragment.setPhotoID(photos.get(i).getId());
             fragment.show(ref.getSupportFragmentManager(), "comments");
         });
 

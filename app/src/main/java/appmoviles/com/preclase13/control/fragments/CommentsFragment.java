@@ -15,7 +15,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.UUID;
 
 import appmoviles.com.preclase13.R;
 
@@ -23,7 +29,14 @@ public class CommentsFragment extends DialogFragment {
 
     private EditText commentEt;
     private Button commentBtn;
+
     private ListView commentList;
+    private ArrayList<String> comentarios;
+    private ArrayAdapter<String> arrayAdapter;
+
+    FirebaseDatabase db;
+    private String photoID;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,10 +44,39 @@ public class CommentsFragment extends DialogFragment {
         commentEt = view.findViewById(R.id.comment_et);
         commentBtn = view.findViewById(R.id.comment_btn);
         commentList = view.findViewById(R.id.comment_list);
+        db = FirebaseDatabase.getInstance();
+
+        comentarios = new ArrayList<>();
+        arrayAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1,
+                comentarios);
+        commentList.setAdapter(arrayAdapter);
 
         commentBtn.setOnClickListener((v)->{
+            db.getReference().child("comentarios")
+                    .child(photoID)
+                    .push()
+                    .setValue(commentEt.getText().toString());
             hideSoftKeyboard(v);
         });
+
+        db.getReference().child("comentarios").child(photoID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        comentarios.clear();
+                        for(DataSnapshot child : dataSnapshot.getChildren()){
+                            String c = child.getValue(String.class);
+                            comentarios.add(c);
+                        }
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
         return view;
     }
@@ -46,4 +88,7 @@ public class CommentsFragment extends DialogFragment {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public void setPhotoID(String photoID) {
+        this.photoID = photoID;
+    }
 }

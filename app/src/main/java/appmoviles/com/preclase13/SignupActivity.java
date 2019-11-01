@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import appmoviles.com.preclase13.model.entity.Friend;
 import appmoviles.com.preclase13.model.entity.User;
 import appmoviles.com.preclase13.view.custom.ScrolledDatePicker;
 
@@ -108,9 +109,19 @@ public class SignupActivity extends AppCompatActivity {
                                         date.getTime(),
                                         signin_password.getText().toString()
                                 );
-
                                 db.getReference().child("usuarios").child(user.getUid())
                                         .setValue(user);
+
+                                Friend friend = new Friend(
+                                        user.getUid(),
+                                        user.getName(),
+                                        user.getEmail(),
+                                        user.getUsername(),
+                                        user.getPhone()
+                                );
+                                db.getReference().child("amigos")
+                                        .child(friend.getUid())
+                                        .setValue(friend);
 
                                 Intent i = new Intent(SignupActivity.this, MainActivity.class);
                                 startActivity(i);
