@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                             .child(auth.getCurrentUser().getUid())
                             .setValue(completeAlbums);
 
+
                     HashMap<String, Album> albums = CRUDAlbum.getAllAlbums();
                     for (String keyAlbums : albums.keySet()) {
                         Album nAlbum = albums.get(keyAlbums);
@@ -188,6 +189,9 @@ public class MainActivity extends AppCompatActivity {
                                 .child(auth.getCurrentUser().getUid())
                                 .child(nAlbum.getId())
                                 .setValue(nAlbum);
+
+
+
 
                         HashMap<String, Photo> photos = CRUDPhoto.getAllPhotosOfAlbum(nAlbum);
                         for (String photoKey : photos.keySet()) {

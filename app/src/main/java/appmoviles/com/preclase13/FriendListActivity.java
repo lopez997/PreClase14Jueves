@@ -113,7 +113,10 @@ public class FriendListActivity extends AppCompatActivity {
                     albumList.setVisibility(View.GONE);
                     photoList.setVisibility(View.VISIBLE);
 
-                    db.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
+                    db.getReference()
+                            .child("fotos")         //<---ESTO ERA LO
+                            .child(album.getId())   //<---QUE FALTABA!
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             for(DataSnapshot child : dataSnapshot.getChildren()){
