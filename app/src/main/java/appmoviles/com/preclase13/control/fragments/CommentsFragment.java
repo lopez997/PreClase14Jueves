@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import appmoviles.com.preclase13.R;
+import appmoviles.com.preclase13.model.entity.Comment;
 
 public class CommentsFragment extends DialogFragment {
 
@@ -31,8 +32,8 @@ public class CommentsFragment extends DialogFragment {
     private Button commentBtn;
 
     private ListView commentList;
-    private ArrayList<String> comentarios;
-    private ArrayAdapter<String> arrayAdapter;
+    private ArrayList<Comment> comentarios;
+    private ArrayAdapter<Comment> arrayAdapter;
 
     FirebaseDatabase db;
     private String photoID;
@@ -53,10 +54,9 @@ public class CommentsFragment extends DialogFragment {
         commentList.setAdapter(arrayAdapter);
 
         commentBtn.setOnClickListener((v)->{
-            db.getReference().child("comentarios")
-                    .child(photoID)
-                    .push()
-                    .setValue(commentEt.getText().toString());
+
+            //Enviar comentario
+
             hideSoftKeyboard(v);
         });
 
@@ -64,12 +64,7 @@ public class CommentsFragment extends DialogFragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        comentarios.clear();
-                        for(DataSnapshot child : dataSnapshot.getChildren()){
-                            String c = child.getValue(String.class);
-                            comentarios.add(c);
-                        }
-                        arrayAdapter.notifyDataSetChanged();
+                        //Recibir comentarios
                     }
 
                     @Override
