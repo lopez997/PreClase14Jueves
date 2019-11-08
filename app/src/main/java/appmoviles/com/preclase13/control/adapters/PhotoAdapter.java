@@ -2,6 +2,8 @@ package appmoviles.com.preclase13.control.adapters;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,9 +67,12 @@ public class PhotoAdapter extends BaseAdapter {
         rowViews.setText("Views: "+photos.get(i).getViews());
         rowDesc.setText(photos.get(i).getDescription());
 
+        /*
         File file = new File(viewGroup.getContext().getExternalFilesDir(null) + "/" + photos.get(i).getId() + ".png");
         Bitmap imagen = BitmapFactory.decodeFile(file.toString());
         rowImage.setImageBitmap(imagen);
+        */
+        loadImageFromInternet(i, rowImage);
 
         commentsPhotoBtn.setOnClickListener((v)->{
             CommentsFragment fragment = new CommentsFragment();
@@ -73,6 +82,18 @@ public class PhotoAdapter extends BaseAdapter {
 
         return rowView;
 
+    }
+
+    private void loadImageFromInternet(int i, ImageView rowImage) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storage.getReference()
+                .child("fotos")
+                .child(photos.get(i).getId()+".png")
+                .getDownloadUrl().addOnSuccessListener(uri -> {
+                    String url = uri.toString();
+                    Log.e(">>>", url);
+                    Glide.with(rowImage).load(url).into(rowImage);
+                });
     }
 
     public void addPhoto(Photo photo){

@@ -23,8 +23,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout controlPanel;
     FirebaseAuth auth;
     FirebaseDatabase db;
+    FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
+        storage = FirebaseStorage.getInstance();
 
 
         if (auth.getCurrentUser() == null) {
@@ -181,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
                             .setValue(completeAlbums);
 
 
+                    db.getReference().child("albums")
+                            .child(auth.getCurrentUser().getUid())
+                            .setValue(null);
+
                     HashMap<String, Album> albums = CRUDAlbum.getAllAlbums();
                     for (String keyAlbums : albums.keySet()) {
                         Album nAlbum = albums.get(keyAlbums);
@@ -190,7 +200,9 @@ public class MainActivity extends AppCompatActivity {
                                 .child(nAlbum.getId())
                                 .setValue(nAlbum);
 
-
+                        db.getReference().child("fotos")
+                                .child(nAlbum.getId())
+                                .setValue(null);
 
 
                         HashMap<String, Photo> photos = CRUDPhoto.getAllPhotosOfAlbum(nAlbum);
@@ -207,9 +219,64 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
+                    //Subir las fotos
+                    try{
+                        File folder = getExternalFilesDir(null);
+                        String[] files = folder.list();
+
+                        for(int i=0 ; i<files.length ; i++){
+                            String imagePath = folder.toString() + "/" + files[i];
+                            File imageFile = new File(imagePath);
+                            Log.e(">>>",imageFile.toString());
+                            FileInputStream fis = new FileInputStream(imageFile);
+                            //Subir
+
+                            storage.getReference().child("fotos")
+                                    .child(files[i])
+                                    .putStream(fis);
+
+
+
+                        }
+
+                    }catch (FileNotFoundException ex){
+                        ex.printStackTrace();
+                    }
+
 
                 }
         );
+
+
+        //Descarga de datos
+        db.getReference().child("albumEmbedding")
+                .child(auth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        CRUDPhoto.deleteAllPhotos();
+                        CRUDAlbum.deleteAllAlbums();
+                        for(DataSnapshot album : dataSnapshot.getChildren()){
+                            Album nAlbum = album.getValue(Album.class);
+                            CRUDAlbum.insertAlbum(nAlbum);
+
+                            if( nAlbum.getPhotos() == null ) continue;
+
+                            for(String photoKey : nAlbum.getPhotos().keySet()){
+                                Photo nPhoto = nAlbum.getPhotos().get(photoKey);
+                                CRUDPhoto.insertPhoto(nAlbum, nPhoto);
+                            }
+                        }
+                        refreshTaskList();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
 
     }
 

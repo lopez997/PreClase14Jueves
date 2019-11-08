@@ -56,6 +56,14 @@ public class CommentsFragment extends DialogFragment {
         commentBtn.setOnClickListener((v)->{
 
             //Enviar comentario
+            String uid = db.getReference().child("comentarios")
+                    .child(photoID)
+                    .push().getKey(); //.child(random)
+
+            Comment comment = new Comment(uid, commentEt.getText().toString());
+            db.getReference().child("comentarios").child(photoID)
+                    .child(uid).setValue(comment);
+
 
             hideSoftKeyboard(v);
         });
@@ -65,6 +73,12 @@ public class CommentsFragment extends DialogFragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //Recibir comentarios
+                        comentarios.clear();
+                        for(DataSnapshot child : dataSnapshot.getChildren()){
+                            Comment c = child.getValue(Comment.class);
+                            comentarios.add(c);
+                        }
+                        arrayAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -72,6 +86,8 @@ public class CommentsFragment extends DialogFragment {
 
                     }
                 });
+
+
 
         return view;
     }
