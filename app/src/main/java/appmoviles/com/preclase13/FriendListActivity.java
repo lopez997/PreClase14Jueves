@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +34,7 @@ public class FriendListActivity extends AppCompatActivity {
 
     private ListView photoList;
     private PhotoAdapter photoAdapter;
+    private Button backButton;
 
     FirebaseDatabase db;
 
@@ -62,12 +64,14 @@ public class FriendListActivity extends AppCompatActivity {
 
         photoList = findViewById(R.id.photoList);
         photoList.setAdapter(photoAdapter);
+        backButton = findViewById(R.id.back_button);
 
 
         db.getReference().child("amigos").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        friends.clear();
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                             Friend friend = child.getValue(Friend.class);
                             friends.add(friend);
@@ -92,6 +96,7 @@ public class FriendListActivity extends AppCompatActivity {
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    albums.clear();
                                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                                         Album album = child.getValue(Album.class);
                                         albums.add(album);
@@ -119,6 +124,7 @@ public class FriendListActivity extends AppCompatActivity {
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            photoAdapter.clear();
                             for(DataSnapshot child : dataSnapshot.getChildren()){
                                 Photo photo = child.getValue(Photo.class);
                                 photoAdapter.addPhoto(photo);
@@ -133,6 +139,18 @@ public class FriendListActivity extends AppCompatActivity {
 
                 }
         );
+
+        backButton.setOnClickListener((v)->{
+            if( photoList.getVisibility() == View.VISIBLE ){
+                photoList.setVisibility(View.GONE);
+                albumList.setVisibility(View.VISIBLE);
+            }else if( albumList.getVisibility() == View.VISIBLE ){
+                albumList.setVisibility(View.GONE);
+                friendList.setVisibility(View.VISIBLE);
+            }else if( friendList.getVisibility() == View.VISIBLE ){
+                finish();
+            }
+        });
 
 
     }
