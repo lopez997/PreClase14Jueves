@@ -18,7 +18,7 @@
         <activity android:name=".FriendListActivity"></activity>
         <activity android:name=".SignupActivity"></activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

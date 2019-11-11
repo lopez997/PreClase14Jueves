@@ -35,7 +35,6 @@ public class FriendListActivity extends AppCompatActivity {
     private ListView photoList;
     private PhotoAdapter photoAdapter;
     private Button backButton;
-
     FirebaseDatabase db;
 
     @Override
