@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import appmoviles.com.preclase13.R;
 import appmoviles.com.preclase13.model.entity.Comment;
+import appmoviles.com.preclase13.model.entity.Photo;
 
 public class CommentsFragment extends DialogFragment {
 
@@ -35,8 +36,9 @@ public class CommentsFragment extends DialogFragment {
     private ArrayList<Comment> comentarios;
     private ArrayAdapter<Comment> arrayAdapter;
 
+
     FirebaseDatabase db;
-    private String photoID;
+    private Photo photo;
 
 
     @Override
@@ -57,18 +59,18 @@ public class CommentsFragment extends DialogFragment {
 
             //Enviar comentario
             String uid = db.getReference().child("comentarios")
-                    .child(photoID)
+                    .child(photo.getId())
                     .push().getKey(); //.child(random)
 
             Comment comment = new Comment(uid, commentEt.getText().toString());
-            db.getReference().child("comentarios").child(photoID)
+            db.getReference().child("comentarios").child(photo.getId())
                     .child(uid).setValue(comment);
 
 
             hideSoftKeyboard(v);
         });
 
-        db.getReference().child("comentarios").child(photoID)
+        db.getReference().child("comentarios").child(photo.getId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -99,7 +101,9 @@ public class CommentsFragment extends DialogFragment {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public void setPhotoID(String photoID) {
-        this.photoID = photoID;
+
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
     }
 }
