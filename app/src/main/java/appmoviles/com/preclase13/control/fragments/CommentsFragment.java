@@ -2,6 +2,7 @@ package appmoviles.com.preclase13.control.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class CommentsFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.e(">>>",""+getActivity());
         View view = inflater.inflate(R.layout.fragment_comments, null);
         commentEt = view.findViewById(R.id.comment_et);
         commentBtn = view.findViewById(R.id.comment_btn);

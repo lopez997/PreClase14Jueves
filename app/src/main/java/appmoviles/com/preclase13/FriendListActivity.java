@@ -35,6 +35,9 @@ public class FriendListActivity extends AppCompatActivity {
     private ListView photoList;
     private PhotoAdapter photoAdapter;
     private Button backButton;
+
+    private Friend friend;
+
     FirebaseDatabase db;
 
     @Override
@@ -87,7 +90,7 @@ public class FriendListActivity extends AppCompatActivity {
 
         friendList.setOnItemClickListener(
                 (adapterView, view, i, l) -> {
-                    Friend friend = friends.get(i);
+                    friend = friends.get(i);
                     friendList.setVisibility(View.GONE);
                     albumList.setVisibility(View.VISIBLE);
                     db.getReference().child("albums")
