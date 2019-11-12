@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +36,7 @@ public class FriendListActivity extends AppCompatActivity {
     private ListView photoList;
     private PhotoAdapter photoAdapter;
     private Button backButton;
+    private TextView loadMore;
 
     private Friend friend;
 
@@ -47,6 +49,7 @@ public class FriendListActivity extends AppCompatActivity {
 
         db = FirebaseDatabase.getInstance();
 
+        loadMore = findViewById(R.id.load_more);
         friends = new ArrayList<>();
         friendArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, friends);
@@ -119,25 +122,25 @@ public class FriendListActivity extends AppCompatActivity {
                     Album album = albums.get(i);
                     albumList.setVisibility(View.GONE);
                     photoList.setVisibility(View.VISIBLE);
+                    loadMore.setVisibility(View.VISIBLE);
 
                     db.getReference()
-                            .child("fotos")         //<---ESTO ERA LO
-                            .child(album.getId())   //<---QUE FALTABA!
+                            .child("fotos")
+                            .child(album.getId())
                             .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            photoAdapter.clear();
-                            for(DataSnapshot child : dataSnapshot.getChildren()){
-                                Photo photo = child.getValue(Photo.class);
-                                photoAdapter.addPhoto(photo);
-                            }
-                        }
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                                        Photo photo = child.getValue(Photo.class);
+                                        photoAdapter.addPhoto(photo);
+                                    }
+                                }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-                    });
+                                }
+                            });
 
                 }
         );
@@ -145,7 +148,9 @@ public class FriendListActivity extends AppCompatActivity {
         backButton.setOnClickListener((v)->{
             if( photoList.getVisibility() == View.VISIBLE ){
                 photoList.setVisibility(View.GONE);
+                loadMore.setVisibility(View.GONE);
                 albumList.setVisibility(View.VISIBLE);
+
             }else if( albumList.getVisibility() == View.VISIBLE ){
                 albumList.setVisibility(View.GONE);
                 friendList.setVisibility(View.VISIBLE);
@@ -153,6 +158,13 @@ public class FriendListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        loadMore.setOnClickListener(
+                (v) -> {
+
+                }
+        );
+
     }
 
     public Friend getFriend() {
