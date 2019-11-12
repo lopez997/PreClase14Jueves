@@ -153,7 +153,9 @@ public class FriendListActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
 
-
+    public Friend getFriend() {
+        return friend;
     }
 }
