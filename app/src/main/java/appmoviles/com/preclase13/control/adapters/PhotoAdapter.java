@@ -67,12 +67,13 @@ public class PhotoAdapter extends BaseAdapter {
         rowViews.setText("Views: "+photos.get(i).getViews());
         rowDesc.setText(photos.get(i).getDescription());
 
-        /*
         File file = new File(viewGroup.getContext().getExternalFilesDir(null) + "/" + photos.get(i).getId() + ".png");
-        Bitmap imagen = BitmapFactory.decodeFile(file.toString());
-        rowImage.setImageBitmap(imagen);
-        */
-        loadImageFromInternet(i, rowImage);
+        if(file.exists()) {
+            Bitmap imagen = BitmapFactory.decodeFile(file.toString());
+            rowImage.setImageBitmap(imagen);
+        }else {
+            loadImageFromInternet(i, rowImage);
+        }
 
         commentsPhotoBtn.setOnClickListener((v)->{
             CommentsFragment fragment = new CommentsFragment();
