@@ -35,15 +35,18 @@ public class MainActivityDataController {
         db = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
 
-        checkSignedIn();
-        downloadOwnUser();
-        downloadAllDataForSync();
+        if(isSignedIn()) {
+            downloadOwnUser();
+            downloadAllDataForSync();
+        }
     }
 
-    private void checkSignedIn() {
+    private boolean isSignedIn() {
         if (auth.getCurrentUser() == null) {
             observer.onUserNoAuth();
-            return;
+            return false;
+        }else{
+            return true;
         }
     }
 

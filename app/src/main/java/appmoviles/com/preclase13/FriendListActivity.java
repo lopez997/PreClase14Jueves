@@ -150,7 +150,6 @@ public class FriendListActivity extends AppCompatActivity {
                 photoList.setVisibility(View.GONE);
                 loadMore.setVisibility(View.GONE);
                 albumList.setVisibility(View.VISIBLE);
-
             }else if( albumList.getVisibility() == View.VISIBLE ){
                 albumList.setVisibility(View.GONE);
                 friendList.setVisibility(View.VISIBLE);

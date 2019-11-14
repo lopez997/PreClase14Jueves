@@ -49,8 +49,8 @@ public class MainActivityController implements AdapterView.OnItemClickListener, 
         requestPermissions();
 
         dataController = new MainActivityDataController();
-        dataController.init();
         dataController.setObserver(this);
+        dataController.init();
 
     }
 
