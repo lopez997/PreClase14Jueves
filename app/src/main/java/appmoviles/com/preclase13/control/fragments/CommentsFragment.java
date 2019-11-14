@@ -68,6 +68,8 @@ public class CommentsFragment extends DialogFragment {
             db.getReference().child("comentarios").child(photo.getId())
                     .child(uid).setValue(comment);
 
+            
+
 
             hideSoftKeyboard(v);
         });
